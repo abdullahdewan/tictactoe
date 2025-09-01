@@ -1,0 +1,23 @@
+
+services:
+
+  server:
+    build:
+      context: ./
+      dockerfile: Dockerfile.dev
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./:/app
+    env_file:
+      - .env.local
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

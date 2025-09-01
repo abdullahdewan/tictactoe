@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 font-sans antialiased;
+    margin: 0;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg border border-white/20 dark:border-slate-700/50;
+  }
+  
+  .game-cell {
+    @apply w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 bg-white/90 dark:bg-slate-800/90 border-2 border-slate-200 dark:border-slate-600 rounded-xl flex items-center justify-center text-4xl sm:text-5xl md:text-6xl font-bold cursor-pointer transition-all duration-200 hover:bg-white dark:hover:bg-slate-700 hover:border-primary-300 dark:hover:border-primary-600 hover:scale-105 hover:shadow-lg;
+  }
+  
+  .game-cell:hover {
+    @apply shadow-primary-200/50 dark:shadow-primary-900/50;
+  }
+  
+  .game-cell.disabled {
+    @apply cursor-not-allowed hover:scale-100 hover:shadow-none;
+  }
+
+  .border-border {
+    @apply border-0
+  }
+}

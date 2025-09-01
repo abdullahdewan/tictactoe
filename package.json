@@ -1,0 +1,35 @@
+{
+  "name": "server",
+  "type": "module",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently -c \"#93c5fd,#fdba74\" \"yarn server:dev\" \"yarn --cwd frontend dev --port=5000 --host\" --names=server,vite",
+    "build": "tsc && tsc-alias",
+    "start": "node dist/index.js",
+    "server:dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "arctic": "^3.7.0",
+    "cookie": "^1.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.18.0",
+    "socket.io": "^4.8.1",
+    "typescript": "^5.9.2"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.3.0",
+    "concurrently": "^9.2.1",
+    "tsc-alias": "^1.8.16",
+    "tsx": "^4.20.5"
+  }
+}
