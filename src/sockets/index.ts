@@ -119,11 +119,18 @@ export default (io: Server) => {
           // Update board and check for winner
           game.board[index] = player.symbol
           game.markModified('board')
+
+          // Record the move
+          game.moves.push({ symbol: player.symbol, position: index })
+
           const gameResult = checkWinner(game.board)
 
           if (gameResult) {
             game.status = 'completed'
             game.winner = gameResult.winner
+            if (gameResult.winner !== 'draw') {
+              game.winningLine = gameResult.line
+            }
             await game.save()
             io.to(roomId).emit('gameEnd', {
               result: { winner: game.winner, winningLine: gameResult.line },

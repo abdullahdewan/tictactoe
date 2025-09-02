@@ -17,12 +17,17 @@ app.use('/api', apiRouter)
 
 // Static files (Vue dist folder)
 const vueDistPath =
-  process.env.FRONTEND_PATH || path.join(path.dirname(''), '../../frontend/dist')
+  process.env.FRONTEND_PATH ||
+  path.join(path.dirname(''), '../../frontend/dist')
 app.use(express.static(vueDistPath))
 
 // Catch-all route: send index.html for SPA routes
 app.use((req: Request, res: Response) => {
-  res.sendFile(path.join(vueDistPath, 'index.html'))
+  if (process.env.NODE_ENV === 'production') {
+    res.sendFile(path.join(vueDistPath, 'index.html'))
+  } else {
+    res.status(404).json({ message: 'Not found' })
+  }
 })
 
 // Error handler
