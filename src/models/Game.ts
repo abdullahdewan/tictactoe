@@ -64,6 +64,9 @@ const gameSchema = new mongoose.Schema(
     winner: {
       type: String, // Can be 'X', 'O', or 'draw'
     },
+    winningLine: {
+      type: [Number],
+    },
     moves: {
       type: [moveSchema],
       default: [],

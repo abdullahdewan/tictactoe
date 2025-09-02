@@ -22,17 +22,19 @@ export interface User {
 }
 
 export interface RecentGame {
-  _id: string
+  _id: string;
   players: {
-    user_id: User
-    symbol: 'X' | 'O'
-    isHost: boolean
-    _id: string
-  }[]
-  winner: 'X' | 'O' | 'draw'
-  updatedAt: string
-  result: 'win' | 'loss' | 'draw'
-  moves: { symbol: 'X' | 'O'; position: number }[]
+    user_id: User;
+    symbol: 'X' | 'O';
+    isHost: boolean;
+    _id: string;
+  }[];
+  winner: 'X' | 'O' | 'draw';
+  updatedAt: string;
+  result: 'win' | 'loss' | 'draw';
+  moves: { symbol: 'X' | 'O'; position: number }[];
+  winningLine?: number[];
+  board: (string | null)[];
 }
 
 export const useGameStore = defineStore(

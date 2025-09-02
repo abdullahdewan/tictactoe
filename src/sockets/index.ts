@@ -128,6 +128,9 @@ export default (io: Server) => {
           if (gameResult) {
             game.status = 'completed'
             game.winner = gameResult.winner
+            if (gameResult.winner !== 'draw') {
+              game.winningLine = gameResult.line
+            }
             await game.save()
             io.to(roomId).emit('gameEnd', {
               result: { winner: game.winner, winningLine: gameResult.line },

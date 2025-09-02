@@ -11,7 +11,6 @@
   "dependencies": {
     "@tailwindcss/forms": "^0.5.10",
     "axios": "^1.11.0",
-    "date-fns": "^4.1.0",
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.5.0",
     "socket.io-client": "^4.8.1",

@@ -7,10 +7,11 @@
         <div
           v-for="(cell, index) in reviewBoard"
           :key="index"
-          class="w-full h-full bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center text-4xl font-bold"
+          class="w-full h-full bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center text-4xl font-bold transition-colors"
           :class="{
             'text-primary-500': cell === 'X',
             'text-emerald-500': cell === 'O',
+            'winning-cell': isWinningCell(index)
           }"
         >
           {{ cell }}
@@ -27,6 +28,23 @@
   </div>
 </template>
 
+<style scoped>
+.winning-cell {
+  animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    background-color: rgba(250, 204, 21, 0.5);
+    box-shadow: 0 0 5px #facc15, 0 0 10px #facc15, 0 0 15px #facc15;
+  }
+  to {
+    background-color: rgba(250, 204, 21, 0.7);
+    box-shadow: 0 0 10px #fde047, 0 0 20px #fde047, 0 0 30px #fde047;
+  }
+}
+</style>
+
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { RecentGame } from '@/stores/gameStore'
@@ -40,13 +58,21 @@ defineEmits(['close'])
 
 const reviewBoard = ref<(string | null)[]>(Array(9).fill(null))
 const isReplaying = ref(false)
+const highlightedLine = ref<number[] | undefined>([])
 
 watch(() => props.show, (newVal) => {
   if (newVal && props.game) {
     // When the modal is shown, display the final board state initially
     reviewBoard.value = [...props.game.board]
+    highlightedLine.value = props.game.winningLine
+  } else {
+    highlightedLine.value = []
   }
 })
+
+const isWinningCell = (index: number) => {
+  return highlightedLine.value?.includes(index)
+}
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -55,11 +81,15 @@ const replayAnimation = async () => {
 
   isReplaying.value = true
   reviewBoard.value = Array(9).fill(null)
+  highlightedLine.value = []
 
   for (const move of props.game.moves) {
-    await sleep(500)
+    await sleep(400) // Slightly faster animation
     reviewBoard.value[move.position] = move.symbol
   }
+
+  await sleep(300)
+  highlightedLine.value = props.game.winningLine
 
   isReplaying.value = false
 }
