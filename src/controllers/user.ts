@@ -15,7 +15,7 @@ export const getRecentGames = async (req: Request, res: Response) => {
       .lean()
 
     const gamesWithResult = games.map(game => {
-      const me = game.players.find(p => p.user_id.id.toString() === userId.toString())
+      const me = game.players.find(p => p.user_id._id.toString() === userId.toString())
       let result: 'win' | 'loss' | 'draw'
       if (game.winner === 'draw') {
         result = 'draw'

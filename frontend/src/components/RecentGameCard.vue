@@ -1,9 +1,15 @@
 <template>
   <div class="glass-card rounded-2xl p-4 flex items-center justify-between">
     <div class="flex items-center gap-4">
-      <img :src="opponent?.avatar" :alt="opponent?.name" class="w-12 h-12 rounded-full" />
+      <img
+        :src="opponent?.avatar"
+        :alt="opponent?.name"
+        class="w-12 h-12 rounded-full"
+      />
       <div>
-        <p class="font-bold text-slate-800 dark:text-white">{{ opponent?.name }}</p>
+        <p class="font-bold text-slate-800 dark:text-white">
+          {{ opponent?.name }}
+        </p>
         <p class="text-sm text-slate-500 dark:text-slate-400">{{ timeAgo }}</p>
       </div>
     </div>
@@ -16,12 +22,15 @@
           'text-slate-500': gameResult === 'draw',
         }"
       >
-        {{ gameResult.charAt(0).toUpperCase() + gameResult.slice(1) }}
+        {{ gameResult.charAt(0)?.toUpperCase() + gameResult?.slice(1) || '' }}
       </p>
       <p class="text-sm text-slate-500 dark:text-slate-400">
         You played as {{ mySymbol }}
       </p>
-      <button @click="$emit('review')" class="text-sm text-primary-500 hover:underline mt-1">
+      <button
+        @click="$emit('review')"
+        class="text-sm text-primary-500 hover:underline mt-1"
+      >
         Review Game
       </button>
     </div>
@@ -68,6 +77,8 @@ const timeAgo = computed(() => {
   if (!props.game || !props.game.updatedAt) {
     return 'Unknown'
   }
-  return formatDistanceToNow(new Date(props.game.updatedAt), { addSuffix: true })
+  return formatDistanceToNow(new Date(props.game.updatedAt), {
+    addSuffix: true,
+  })
 })
 </script>
