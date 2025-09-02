@@ -131,12 +131,7 @@ export const useGameStore = defineStore(
     }
 
     const playAgain = () => {
-      notificationStore.showSuccess('Play Again feature will come soon!')
-      return false
-      resetGame()
-      gameState.value = 'waiting'
-
-      socket.emit('playAgain', roomCode.value)
+      socket.emit('playAgain', { roomId: roomCode.value })
     }
 
     const leaveGame = () => {
@@ -228,6 +223,24 @@ export const useGameStore = defineStore(
     socket.on('gameStarted', () => {
       console.log('Re-joining game:', roomCode.value)
       socket.emit('getState')
+    })
+
+    socket.on('rematchStarted', game => {
+      console.log('Rematch started:', game)
+      const me = game.players.find(
+        (player: any) => player.id === currentUser.value?.id,
+      )
+      roomCode.value = game.roomId
+      gameState.value = game.status
+      board.value = game.board
+      mySymbol.value = me.symbol
+      isHost.value = me.isHost
+      opponent.value = game.opponent
+      currentPlayer.value = game.turn
+      gameResult.value = null
+
+      notificationStore.showSuccess('Rematch started! Good luck!')
+      router.push('/game')
     })
 
     socket.on('gameEnd', data => {

@@ -143,10 +143,68 @@ export default (io: Server) => {
       },
     )
 
-    // Play again feature placeholder
-    socket.on('playAgain', async (roomId: string) => {
-      socket.emit('error', 'Play Again feature will come soon!')
-      // Future implementation can go here
+    // Play again
+    socket.on('playAgain', async ({ roomId }: { roomId: string }) => {
+      try {
+        const oldGame = await Game.findOne({ roomId }).populate(
+          'players.user_id',
+        )
+        if (!oldGame) {
+          return emitGameError(socket, 'Original game not found.')
+        }
+
+        // Determine the new host (the player who was not the host before)
+        const newHost = oldGame.players.find((p: any) => !p.isHost)
+        const newGuest = oldGame.players.find((p: any) => p.isHost)
+
+        if (!newHost || !newGuest) {
+          return emitGameError(
+            socket,
+            'Could not determine players for a rematch.',
+          )
+        }
+
+        const newRoomId = generateRoomCode()
+        const newGame = new Game({
+          roomId: newRoomId,
+          players: [
+            { user_id: newHost.user_id._id, symbol: 'X', isHost: true },
+            { user_id: newGuest.user_id._id, symbol: 'O', isHost: false },
+          ],
+          status: 'playing',
+          turn: 'X',
+        })
+        await newGame.save()
+
+        // Update sockets to join the new room
+        const socketsInRoom = await io.in(roomId).fetchSockets()
+        socketsInRoom.forEach(s => {
+          s.leave(roomId)
+          s.join(newRoomId)
+          socketIdToRoomId.set(s.id, newRoomId)
+        })
+
+        const populatedGame = await Game.findById(newGame._id).populate(
+          'players.user_id',
+        )
+
+        // Notify each player with their specific opponent
+        const newSocketsInRoom = await io.in(newRoomId).fetchSockets()
+        for (const s of newSocketsInRoom) {
+          const user = s.data.user
+          const opponentPlayer = populatedGame.players.find(
+            (p: any) => !p.user_id.equals(user._id),
+          )
+          const opponent = opponentPlayer ? opponentPlayer.user_id : null
+          s.emit('rematchStarted', formatStartGame(populatedGame, opponent))
+        }
+
+        console.log(
+          `🔄 Rematch started for room ${roomId}. New room is ${newRoomId}`,
+        )
+      } catch (err) {
+        handleError(socket, 'Could not start a rematch.', err)
+      }
     })
 
     // Leave the game room
