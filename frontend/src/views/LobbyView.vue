@@ -99,10 +99,22 @@
         </GameCard>
       </div>
 
-      <!-- Recent Games (Placeholder) -->
+      <!-- Recent Games -->
       <div class="mt-16">
         <h2 class="text-xl font-bold text-slate-800 dark:text-white mb-6">Recent Games</h2>
-        <div class="glass-card rounded-2xl p-8 text-center">
+
+        <!-- Games List -->
+        <div v-if="gameStore.recentGames.length > 0" class="space-y-4">
+          <RecentGameCard
+            v-for="game in gameStore.recentGames"
+            :key="game._id"
+            :game="game"
+            @review="openReviewModal(game)"
+          />
+        </div>
+
+        <!-- Placeholder -->
+        <div v-else class="glass-card rounded-2xl p-8 text-center">
           <svg class="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
           </svg>
@@ -111,20 +123,45 @@
         </div>
       </div>
     </div>
+
+    <GameReviewModal
+      :show="isReviewModalOpen"
+      :game="selectedGameForReview"
+      @close="closeReviewModal"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useGameStore } from '../stores/gameStore'
+import { ref, onMounted } from 'vue'
+import { useGameStore, type RecentGame } from '../stores/gameStore'
 import { useNotificationStore } from '../stores/notificationStore'
 import GameCard from '../components/GameCard.vue'
+import RecentGameCard from '../components/RecentGameCard.vue'
+import GameReviewModal from '../components/GameReviewModal.vue'
 
 const gameStore = useGameStore()
 const notificationStore = useNotificationStore()
 
 const joinCode = ref('')
 const isCreatingGame = ref(false)
+
+const isReviewModalOpen = ref(false)
+const selectedGameForReview = ref<RecentGame | null>(null)
+
+onMounted(() => {
+  gameStore.fetchRecentGames()
+})
+
+const openReviewModal = (game: RecentGame) => {
+  selectedGameForReview.value = game
+  isReviewModalOpen.value = true
+}
+
+const closeReviewModal = () => {
+  isReviewModalOpen.value = false
+  selectedGameForReview.value = null
+}
 
 const handleCreateGame = async () => {
   isCreatingGame.value = true

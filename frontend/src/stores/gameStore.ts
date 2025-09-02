@@ -21,6 +21,20 @@ export interface User {
   avatar: string
 }
 
+export interface RecentGame {
+  _id: string
+  players: {
+    user_id: User
+    symbol: 'X' | 'O'
+    isHost: boolean
+    _id: string
+  }[]
+  winner: 'X' | 'O' | 'draw'
+  updatedAt: string
+  result: 'win' | 'loss' | 'draw'
+  moves: { symbol: 'X' | 'O'; position: number }[]
+}
+
 export const useGameStore = defineStore(
   'game',
   () => {
@@ -39,6 +53,7 @@ export const useGameStore = defineStore(
     const isHost = ref<boolean>(false)
     const mySymbol = ref<Player>(null)
     const isJoiningGame = ref<boolean>(false)
+    const recentGames = ref<RecentGame[]>([])
 
     // Watchers
     watch(currentUser, newUser => {
@@ -140,6 +155,16 @@ export const useGameStore = defineStore(
 
     const checkGameStatus = () => {
       socket.emit('getState', roomCode.value)
+    }
+
+    const fetchRecentGames = async () => {
+      try {
+        const response = await axios.get<RecentGame[]>('/api/user/games')
+        recentGames.value = response.data
+      } catch (error) {
+        console.error('Error fetching recent games:', error)
+        notificationStore.showError('Could not load recent games.')
+      }
     }
 
     // socket events
@@ -296,6 +321,7 @@ export const useGameStore = defineStore(
       gameResult,
       isHost,
       isJoiningGame,
+      recentGames,
 
       // Computed
       isMyTurn,
@@ -314,6 +340,7 @@ export const useGameStore = defineStore(
       playAgain,
       leaveGame,
       checkGameStatus,
+      fetchRecentGames,
     }
   },
   {

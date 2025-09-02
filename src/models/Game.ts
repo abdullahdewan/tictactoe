@@ -22,6 +22,18 @@ const playerSchema = new mongoose.Schema({
   },
 })
 
+const moveSchema = new mongoose.Schema({
+  symbol: {
+    type: String,
+    enum: ['X', 'O'],
+    required: true,
+  },
+  position: {
+    type: Number,
+    required: true,
+  },
+})
+
 const gameSchema = new mongoose.Schema(
   {
     roomId: {
@@ -51,6 +63,10 @@ const gameSchema = new mongoose.Schema(
     },
     winner: {
       type: String, // Can be 'X', 'O', or 'draw'
+    },
+    moves: {
+      type: [moveSchema],
+      default: [],
     },
   },
   {

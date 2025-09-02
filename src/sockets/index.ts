@@ -119,6 +119,10 @@ export default (io: Server) => {
           // Update board and check for winner
           game.board[index] = player.symbol
           game.markModified('board')
+
+          // Record the move
+          game.moves.push({ symbol: player.symbol, position: index })
+
           const gameResult = checkWinner(game.board)
 
           if (gameResult) {
