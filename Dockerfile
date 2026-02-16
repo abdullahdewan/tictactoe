@@ -18,6 +18,7 @@ RUN yarn build
 
 ENV PORT=5000
 ENV FRONTEND_PATH=/app/frontend/dist
+ENV NODE_ENV=production
 
 EXPOSE 5000
 CMD ["yarn", "start"]

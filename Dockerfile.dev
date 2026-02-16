@@ -12,12 +12,15 @@ RUN yarn install --frozen-lockfile
 
 # Step 4: Install frontend dependencies
 COPY frontend/package.json frontend/yarn.lock ./frontend/
-RUN yarn install --frozen-lockfile
+RUN cd frontend && yarn install --frozen-lockfile
 
 COPY . .
 
 ENV PORT=3000
 
+# Backend port
+EXPOSE 3000
+# Frontend dev server port
 EXPOSE 5000
 
 CMD ["yarn", "dev"]
