@@ -1,4 +1,4 @@
-import { authUser, generateRoomCode } from '@/lib/utils'
+import { authUser } from '@/lib/utils'
 import { Request, Response, NextFunction } from 'express'
 
 export default async function isAuthenticated(req: Request, res: Response, next: NextFunction) {
