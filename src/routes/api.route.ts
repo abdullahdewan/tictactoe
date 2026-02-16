@@ -1,8 +1,5 @@
 import { Router } from 'express'
 import { GoogleLogin, GoogleCallback } from '@/controllers/google'
-import User from '@/models/User'
-import jwt from 'jsonwebtoken'
-import { cookieConfig } from '@/config'
 
 // middlewares
 import isAuthenticated from '@/middlewares/isAuthenticated'
