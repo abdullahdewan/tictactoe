@@ -273,35 +273,36 @@ export default (io: Server) => {
     })
 
     // Handle disconnects and declare winner if needed
-    socket.on('disconnect', async () => {
+    socket.on('disconnect', () => {
       console.log('🔥 Client disconnected:', socket.id)
       const roomId = socketIdToRoomId.get(socket.id)
       const disconnectedUserId = socket.data.user._id
+      const socketId = socket.id
 
-      await sleep(10000) // Wait 10 seconds before handling disconnect
-
-      if (roomId && disconnectedUserId) {
-        try {
-          const game = await Game.findOne({ roomId })
-          if (game && game.status === 'playing') {
-            const remainingPlayer = game.players.find(
-              (p: any) => !p.user_id.equals(disconnectedUserId),
-            )
-            if (remainingPlayer) {
-              game.status = 'completed'
-              game.winner = remainingPlayer.symbol
-              await game.save()
-              socket.to(roomId).emit('opponentLeft')
-              console.log(
-                `👋 Player left game ${roomId}. Winner: ${remainingPlayer.symbol}`,
+      setTimeout(async () => {
+        if (roomId && disconnectedUserId) {
+          try {
+            const game = await Game.findOne({ roomId })
+            if (game && game.status === 'playing') {
+              const remainingPlayer = game.players.find(
+                (p: any) => !p.user_id.equals(disconnectedUserId),
               )
+              if (remainingPlayer) {
+                game.status = 'completed'
+                game.winner = remainingPlayer.symbol
+                await game.save()
+                io.to(roomId).emit('opponentLeft')
+                console.log(
+                  `👋 Player left game ${roomId}. Winner: ${remainingPlayer.symbol}`,
+                )
+              }
             }
+          } catch (err) {
+            console.error('Error handling disconnect:', err)
           }
-        } catch (err) {
-          console.error('Error handling disconnect:', err)
+          socketIdToRoomId.delete(socketId)
         }
-        socketIdToRoomId.delete(socket.id)
-      }
+      }, 10000)
     })
 
     // Initialize game state for reconnects
@@ -351,11 +352,6 @@ export default (io: Server) => {
     })
     await newGame.save()
     return { roomId, newGame }
-  }
-
-  // Sleep for a given time (ms)
-  function sleep(ms: number = 1000): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms))
   }
 
   // Initialize game state for reconnects
