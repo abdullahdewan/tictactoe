@@ -14,9 +14,9 @@ export const getRecentGames = async (req: Request, res: Response) => {
       .populate('players.user_id', 'id name avatar')
       .lean()
 
-    const gamesWithResult = games.map(game => {
+    const gamesWithResult = games.map((game: any) => {
       const me = game.players.find(
-        p => p.user_id._id.toString() === userId.toString(),
+        (p: any) => p.user_id._id.toString() === userId.toString(),
       )
       let result: 'win' | 'loss' | 'draw'
       if (game.winner === 'draw') {
@@ -26,7 +26,7 @@ export const getRecentGames = async (req: Request, res: Response) => {
       } else {
         result = 'loss'
       }
-      game.players = game.players.map(p => ({
+      game.players = game.players.map((p: any) => ({
         user_id: {
           id: p.user_id._id,
           name: p.user_id.name,
