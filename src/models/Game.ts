@@ -7,6 +7,7 @@ import mongoose from 'mongoose'
 // A sub-schema for players inside the Game schema
 const playerSchema = new mongoose.Schema({
   user_id: {
+    index: true,
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', // Creates a reference to the User model
     required: true,
