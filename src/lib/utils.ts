@@ -19,6 +19,4 @@ export async function authUser(token: string): Promise<InstanceType<typeof User>
   }
 }
 
-export const generateRoomCode = (length: number = 6): string => {
-  return Math.random().toString(36).substring(2, 2 + length).toUpperCase()
-}
+export { generateRoomCode } from './roomCode'
