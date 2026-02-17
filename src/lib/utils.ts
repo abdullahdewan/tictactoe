@@ -19,4 +19,4 @@ export async function authUser(token: string): Promise<InstanceType<typeof User>
   }
 }
 
-export { generateRoomCode } from './roomCode'
+export { generateRoomCode } from '@/lib/roomCode'
