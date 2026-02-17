@@ -27,14 +27,6 @@ onMounted(async () => {
     console.error('Error fetching current user:', error)
     gameStore.logout()
   }
-  setInterval(() => {
-    if (true) return
-    console.log('Checking game status...')
-    if (!gameStore.roomCode) return
-    if (gameStore.gameState == 'playing') return
-
-    gameStore.checkGameStatus()
-  }, 15000) // Check every 15 seconds
   gameStore.checkGameStatus()
 })
 </script>
